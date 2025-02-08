@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Container, Table } from "react-bootstrap";
+import { Container, Table, Pagination } from "react-bootstrap";
 
 const App = () => {
   const searchFile = {
@@ -15,6 +15,8 @@ const App = () => {
 
   const [surahs, setSurahs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const surahsPerPage = 10;
 
   useEffect(() => {
     fetch("https://api.alquran.cloud/v1/surah")
@@ -29,6 +31,16 @@ const App = () => {
       surah.englishName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const lastSurahIndex = currentPage * surahsPerPage;
+  const firstSurahIndex = lastSurahIndex - surahsPerPage;
+  const currentSurahs = filteredSurahs.slice(firstSurahIndex, lastSurahIndex);
+
+  const totalPages = Math.ceil(filteredSurahs.length / surahsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <main className="my-5 py-5">
       <Container className="px-0">
@@ -39,7 +51,10 @@ const App = () => {
           style={searchFile}
           placeholder="Search Surah"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1);
+          }}
         />
         
         <Table striped bordered hover id="myTable">
@@ -50,8 +65,8 @@ const App = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredSurahs.length > 0 ? (
-              filteredSurahs.map((surah) => (
+            {currentSurahs.length > 0 ? (
+              currentSurahs.map((surah) => (
                 <tr key={surah.number}>
                   <td>{surah.name}</td>
                   <td>{surah.englishName}</td>
@@ -66,6 +81,24 @@ const App = () => {
             )}
           </tbody>
         </Table>
+
+        <Pagination className="justify-content-center">
+          <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
+          <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+          
+          {[...Array(totalPages).keys()].map((page) => (
+            <Pagination.Item
+              key={page + 1}
+              active={page + 1 === currentPage}
+              onClick={() => handlePageChange(page + 1)}
+            >
+              {page + 1}
+            </Pagination.Item>
+          ))}
+
+          <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+          <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
+        </Pagination>
       </Container>
     </main>
   );
