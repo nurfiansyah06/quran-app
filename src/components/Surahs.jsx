@@ -33,14 +33,8 @@ const Surahs = () => {
         });
     }, [surah]);
 
-    console.log(englishAyah);
-
-    // for (let i = 0; i < englishAyah.length; i++) {
-    //     console.log(englishAyah[i].text);
-    // }
-
     return (
-        loading ? <Spinner animation="border" role="status">
+        loading ? <Spinner animation="border" role="status" style={{ margin: "auto", display: "block" }}>
             <span className="sr-only"></span>
         </Spinner> :
         <><Container>

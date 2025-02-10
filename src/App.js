@@ -53,91 +53,95 @@ const App = () => {
   return (
     <Router>
       <main className="my-5 py-5">
-        <Container className="px-0">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <h1 className="display-4">Quran App</h1>
-                  <input
-                    type="text"
-                    style={searchFile}
-                    placeholder="Search Surah"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                  />
+  <Container fluid className="px-3">
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <>
+            <h1 className="display-4 text-center">Quran App</h1>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search Surah"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
 
-                  <Table striped bordered hover id="myTable">
-                    <thead>
-                      <tr>
-                        <th>Number</th>
-                        <th>Arabic Name</th>
-                        <th>English Name</th>
-                        <th>Actions</th>
+            <div className="table-responsive">
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Arabic Name</th>
+                    <th>English Name</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentSurahs.length > 0 ? (
+                    currentSurahs.map((surah, index) => (
+                      <tr key={surah.number}>
+                        <td>{firstSurahIndex + index + 1}</td>
+                        <td>{surah.name}</td>
+                        <td>{surah.englishName}</td>
+                        <td>
+                          <Link to={`/surah/${surah.number}`} className="btn btn-sm btn-primary">
+                            View Surah
+                          </Link>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {currentSurahs.length > 0 ? (
-                        currentSurahs.map((surah, index) => (
-                          <tr key={surah.number}>
-                            <td>{firstSurahIndex + index + 1}</td>
-                            <td>{surah.name}</td>
-                            <td>{surah.englishName}</td>
-                            <td>
-                              <Link to={`/surah/${surah.number}`}>View Surah</Link>
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="4" className="text-center">
-                            No surahs available
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </Table>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" className="text-center">
+                        No surahs available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
 
-                  <Pagination className="justify-content-center">
-                    <Pagination.First
-                      onClick={() => handlePageChange(1)}
-                      disabled={currentPage === 1}
-                    />
-                    <Pagination.Prev
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    />
+            <Pagination className="justify-content-center flex-wrap">
+              <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
+              <Pagination.Prev
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              />
 
-                    {[...Array(totalPages).keys()].map((page) => (
-                      <Pagination.Item
-                        key={page + 1}
-                        active={page + 1 === currentPage}
-                        onClick={() => handlePageChange(page + 1)}
-                      >
-                        {page + 1}
-                      </Pagination.Item>
-                    ))}
+              {[...Array(totalPages).keys()].map((page) => (
+                <Pagination.Item
+                  key={page + 1}
+                  active={page + 1 === currentPage}
+                  onClick={() => handlePageChange(page + 1)}
+                >
+                  {page + 1}
+                </Pagination.Item>
+              ))}
 
-                    <Pagination.Next
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    />
-                    <Pagination.Last
-                      onClick={() => handlePageChange(totalPages)}
-                      disabled={currentPage === totalPages}
-                    />
-                  </Pagination>
-                </>
-              }
-            />
-            <Route path="/surah/:id" element={<SurahDetail />} />
-          </Routes>
-        </Container>
-      </main>
+              <Pagination.Next
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              />
+              <Pagination.Last
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+              />
+            </Pagination>
+          </>
+        }
+      />
+      <Route path="/surah/:id" element={<SurahDetail />} />
+    </Routes>
+  </Container>
+</main>
+
     </Router>
   );
 };
