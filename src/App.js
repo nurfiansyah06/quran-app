@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Table, Pagination } from "react-bootstrap";
+import SurahDetail from "./components/Surahs"; 
 
 const App = () => {
   const searchFile = {
@@ -42,65 +44,92 @@ const App = () => {
   };
 
   return (
-    <main className="my-5 py-5">
-      <Container className="px-0">
-        <h1 className="display-4">Quran App</h1>
-        
-        <input
-          type="text"
-          style={searchFile}
-          placeholder="Search Surah"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setCurrentPage(1);
-          }}
-        />
-        
-        <Table striped bordered hover id="myTable">
-          <thead>
-            <tr>
-              <th>Arabic Name</th>
-              <th>English Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentSurahs.length > 0 ? (
-              currentSurahs.map((surah) => (
-                <tr key={surah.number}>
-                  <td>{surah.name}</td>
-                  <td>{surah.englishName}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="2" className="text-center">
-                  No surahs available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
+    <Router>
+      <main className="my-5 py-5">
+        <Container className="px-0">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <h1 className="display-4">Quran App</h1>
+                  <input
+                    type="text"
+                    style={searchFile}
+                    placeholder="Search Surah"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
 
-        <Pagination className="justify-content-center">
-          <Pagination.First onClick={() => handlePageChange(1)} disabled={currentPage === 1} />
-          <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
-          
-          {[...Array(totalPages).keys()].map((page) => (
-            <Pagination.Item
-              key={page + 1}
-              active={page + 1 === currentPage}
-              onClick={() => handlePageChange(page + 1)}
-            >
-              {page + 1}
-            </Pagination.Item>
-          ))}
+                  <Table striped bordered hover id="myTable">
+                    <thead>
+                      <tr>
+                        <th>Arabic Name</th>
+                        <th>English Name</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentSurahs.length > 0 ? (
+                        currentSurahs.map((surah) => (
+                          <tr key={surah.number}>
+                            <td>{surah.name}</td>
+                            <td>{surah.englishName}</td>
+                            <td>
+                              <Link to={`/surah/${surah.number}`}>View Details</Link>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="3" className="text-center">
+                            No surahs available
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </Table>
 
-          <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
-          <Pagination.Last onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages} />
-        </Pagination>
-      </Container>
-    </main>
+                  <Pagination className="justify-content-center">
+                    <Pagination.First
+                      onClick={() => handlePageChange(1)}
+                      disabled={currentPage === 1}
+                    />
+                    <Pagination.Prev
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+
+                    {[...Array(totalPages).keys()].map((page) => (
+                      <Pagination.Item
+                        key={page + 1}
+                        active={page + 1 === currentPage}
+                        onClick={() => handlePageChange(page + 1)}
+                      >
+                        {page + 1}
+                      </Pagination.Item>
+                    ))}
+
+                    <Pagination.Next
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
+                    <Pagination.Last
+                      onClick={() => handlePageChange(totalPages)}
+                      disabled={currentPage === totalPages}
+                    />
+                  </Pagination>
+                </>
+              }
+            />
+            <Route path="/surah/:id" element={<SurahDetail />} />
+          </Routes>
+        </Container>
+      </main>
+    </Router>
   );
 };
 
