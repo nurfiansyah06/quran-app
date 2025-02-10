@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Table, Pagination } from "react-bootstrap";
-import SurahDetail from "./components/Surahs"; 
+import SurahDetail from "./components/Surahs";
+import axios from "axios";
 
 const App = () => {
   const searchFile = {
@@ -21,10 +22,16 @@ const App = () => {
   const surahsPerPage = 10;
 
   useEffect(() => {
-    fetch("https://api.alquran.cloud/v1/surah")
-      .then((response) => response.json())
-      .then((json) => setSurahs(json.data))
-      .catch((error) => console.error("Error fetching data:", error));
+    const fetchSurahs = async () => {
+      try {
+        const response = await axios.get("https://api.alquran.cloud/v1/surah");
+        setSurahs(response.data.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchSurahs();
   }, []);
 
   const filteredSurahs = surahs.filter(
@@ -67,6 +74,7 @@ const App = () => {
                   <Table striped bordered hover id="myTable">
                     <thead>
                       <tr>
+                        <th>Number</th>
                         <th>Arabic Name</th>
                         <th>English Name</th>
                         <th>Actions</th>
@@ -74,18 +82,19 @@ const App = () => {
                     </thead>
                     <tbody>
                       {currentSurahs.length > 0 ? (
-                        currentSurahs.map((surah) => (
+                        currentSurahs.map((surah, index) => (
                           <tr key={surah.number}>
+                            <td>{firstSurahIndex + index + 1}</td>
                             <td>{surah.name}</td>
                             <td>{surah.englishName}</td>
                             <td>
-                              <Link to={`/surah/${surah.number}`}>View Details</Link>
+                              <Link to={`/surah/${surah.number}`}>View Surah</Link>
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="3" className="text-center">
+                          <td colSpan="4" className="text-center">
                             No surahs available
                           </td>
                         </tr>
