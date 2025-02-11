@@ -6,16 +6,6 @@ import SurahDetail from "./components/Surahs";
 import axios from "axios";
 
 const App = () => {
-  const searchFile = {
-    backgroundPosition: "10px 12px",
-    backgroundRepeat: "no-repeat",
-    width: "100%",
-    fontSize: "16px",
-    padding: "12px 20px 12px 40px",
-    border: "1px solid #ddd",
-    marginBottom: "12px",
-  };
-
   const [surahs, setSurahs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
