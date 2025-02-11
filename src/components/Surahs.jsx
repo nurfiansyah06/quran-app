@@ -10,10 +10,15 @@ const Surahs = () => {
     const [surah, setSurah] = useState(null);
     const [loading, setLoading] = useState(true);
     const [englishAyah, setEnglishAyah] = useState(null);
+    const [visibleCount, setVisibleCount] = useState(10);
 
     const handleToggle = () => {
         setIsOn(!isOn);
     };
+
+    const loadMoreAyahs = () => {
+        setVisibleCount(visibleCount + 10);
+    }
 
     useEffect(() => {
         axios.get(`https://api.alquran.cloud/v1/surah/${id}`)
@@ -44,12 +49,23 @@ const Surahs = () => {
         ) : (
             <Container>
                 <h2>Surah {surah?.englishName}</h2>
-                <p className='information'>English Name: {surah?.englishName}</p>
+                <p className='information'>English Name: {surah?.englishNameTranslation}</p>
                 <p>Number of Ayahs: {surah?.numberOfAyahs}</p>
-                <button type="button" class="btn btn-outline-primary" onClick={handleToggle} on={isOn}>Translate</button>
-                <br /><br />
+                <div className="form-check form-switch">
+                <input
+                    className="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    onChange={handleToggle}
+                    checked={isOn}
+                />
+                <label className="form-check-label">
+                    {isOn ? "Translate" : "Hide Translation"}
+                </label>
+                </div>
+                <br />
                 <ol>
-                    {surah?.ayahs.map((ayah, index) => (
+                    {surah?.ayahs.slice(0, visibleCount).map((ayah, index) => (
                         <li key={ayah.number}>
                             {ayah.text}
                             {isOn && <br />}
@@ -58,8 +74,13 @@ const Surahs = () => {
                     ))}
                 </ol>
                 <hr />
+                {visibleCount < surah?.ayahs.length && (
+                    <button type="button" className="btn btn-outline-primary" onClick={loadMoreAyahs}>
+                        Load More
+                    </button>
+                )}
                 <Link to="/">
-                    <button type='button' class="btn btn-outline-danger">Back to List</button>
+                    <button type='button' className="btn btn-outline-danger">Back to List</button>
                 </Link>
             </Container>
         )
